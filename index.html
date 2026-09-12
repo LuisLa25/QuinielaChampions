@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Quiniela LuAn™ - Champions 2026/27</title>
+  <meta name="theme-color" content="#0d1117">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #0d1117;
+      --bg-card: #161b22;
+      --bg-input: #21262d;
+      --border-color: #30363d;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent-color: #2ea043;
+      --accent-hover: #3fb950;
+      --danger-color: #da3633;
+      --gold-color: #f1e05a;
+      --font-family: 'Inter', sans-serif;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-main); color: var(--text-main); font-family: var(--font-family); font-size: 14px; padding-bottom: 75px; }
+
+    header {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 16px;
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .brand { font-weight: 700; font-size: 1.1rem; color: #fff; }
+    .brand span { color: var(--accent-color); }
+    .user-badge {
+      font-size: 0.8rem; background: var(--bg-input);
+      padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border-color);
+    }
+
+    main { padding: 16px; max-width: 600px; margin: 0 auto; }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px; margin-bottom: 16px;
+    }
+    .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 12px; color: #fff; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+
+    input, select, button {
+      width: 100%; padding: 10px 12px; border-radius: var(--radius);
+      border: 1px solid var(--border-color); background-color: var(--bg-input);
+      color: var(--text-main); font-family: inherit; font-size: 0.9rem; outline: none;
+    }
+    input:focus, select:focus { border-color: var(--accent-color); }
+    button {
+      background-color: var(--accent-color); color: #fff;
+      font-weight: 600; border: none; cursor: pointer;
+    }
+    button.secondary {
+      background-color: var(--bg-input); color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+    button.danger { background-color: var(--danger-color); }
+
+    /* MATCH CARD */
+    .match-card {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius); padding: 14px; margin-bottom: 12px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .match-header {
+      display: flex; justify-content: space-between;
+      font-size: 0.75rem; color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color); padding-bottom: 6px;
+    }
+    .match-body {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; gap: 8px; text-align: center;
+    }
+    .team-info { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .team-flag { font-size: 1.6rem; }
+    .team-name { font-weight: 600; font-size: 0.8rem; }
+    .score-inputs { display: flex; align-items: center; gap: 6px; }
+    .score-inputs input { width: 40px; height: 40px; text-align: center; font-size: 1.1rem; font-weight: 700; padding: 0; }
+
+    /* GANADOR SELECTOR */
+    .winner-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+    }
+    .winner-btn {
+      padding: 8px 4px; border: 1px solid var(--border-color);
+      background: var(--bg-input); border-radius: var(--radius);
+      color: var(--text-muted); font-size: 0.75rem; cursor: pointer;
+      text-align: center; font-family: inherit; width: 100%;
+    }
+    .winner-btn.selected {
+      border-color: var(--accent-color);
+      background: rgba(46,160,67,0.15);
+      color: #fff; font-weight: 600;
+    }
+    .winner-label {
+      font-size: 0.7rem; color: var(--text-muted);
+      text-transform: uppercase; margin-bottom: 4px;
+      display: block;
+    }
+
+    /* RANKING */
+    .ranking-table { width: 100%; border-collapse: collapse; }
+    .ranking-table th, .ranking-table td {
+      padding: 10px; text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .ranking-table td:last-child { text-align: right; color: var(--gold-color); font-weight: 700; }
+    .rank-medal { font-size: 1.1rem; }
+
+    /* BADGE */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 12px;
+      font-size: 0.7rem; font-weight: 600;
+    }
+    .badge-open { background: rgba(46,160,67,0.2); color: var(--accent-color); }
+    .badge-closed { background: rgba(218,54,51,0.2); color: var(--danger-color); }
+    .badge-pts5 { background: rgba(241,224,90,0.2); color: var(--gold-color); }
+    .badge-pts3 { background: rgba(46,160,67,0.2); color: var(--accent-color); }
+    .badge-pts0 { background: rgba(139,148,158,0.2); color: var(--text-muted); }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 60px; background-color: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center;
+      color: var(--text-muted); font-size: 0.7rem; gap: 2px;
+      background: none; border: none; width: auto; padding: 0; cursor: pointer;
+    }
+    .nav-item.active { color: var(--accent-color); }
+    .nav-icon { font-size: 1.2rem; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius); padding: 10px 20px;
+      font-size: 0.85rem; z-index: 9999; opacity: 0;
+      transition: all 0.25s; pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.ok { border-color: var(--accent-color); color: var(--accent-color); }
+    .toast.err { border-color: var(--danger-color); color: var(--danger-color); }
+
+    /* ADMIN PIN OVERLAY */
+    .pin-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8); z-index: 500;
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .pin-overlay.show { display: flex; }
+    .pin-box {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius); padding: 24px; width: 100%; max-width: 320px;
+    }
+    .pin-box h2 { font-size: 1rem; margin-bottom: 16px; color: #fff; }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+    .empty-state .big { font-size: 2rem; margin-bottom: 8px; }
+
+    /* MIS PRONÓSTICOS */
+    .pred-result-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 6px; font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Quiniela <span>LuAn™</span></div>
+  <div class="user-badge" id="user-display">Invitado</div>
+</header>
+
+<main>
+
+  <!-- ── LOGIN ── -->
+  <section id="view-auth" class="view active">
+    <div class="card">
+      <div class="card-title">Acceso a la Plataforma</div>
+      <div class="form-group">
+        <label>Nombre de usuario</label>
+        <input type="text" id="auth-username" placeholder="Ejemplo: Luis25">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="auth-password" placeholder="••••••••">
+      </div>
+      <div style="display:flex; gap:8px; margin-top:16px;">
+        <button id="btn-login">Iniciar sesión</button>
+        <button class="secondary" id="btn-register">Registrarse</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── QUINIELA ── -->
+  <section id="view-predictions" class="view">
+    <div class="card">
+      <div class="form-group">
+        <label>Jornada</label>
+        <select id="user-select-round" onchange="app.loadMatchesForUser()">
+          <option value="1">Jornada 1 — 8-10 sep 2026</option>
+          <option value="2">Jornada 2 — 13/14 oct 2026</option>
+          <option value="3">Jornada 3 — 20/21 oct 2026</option>
+          <option value="4">Jornada 4 — 3/4 nov 2026</option>
+          <option value="5">Jornada 5 — 24/25 nov 2026</option>
+          <option value="6">Jornada 6 — 8/9 dic 2026</option>
+          <option value="7">Jornada 7 — 19/20 ene 2027</option>
+          <option value="8">Jornada 8 — 27 ene 2027</option>
+          <option value="16avos">16avos de final</option>
+          <option value="8avos">Octavos de final</option>
+          <option value="4avos">Cuartos de final</option>
+          <option value="SF">Semifinales</option>
+          <option value="Final">Final — 5 jun 2027</option>
+        </select>
+      </div>
+    </div>
+    <div id="user-matches-list"></div>
+  </section>
+
+  <!-- ── MIS PRONÓSTICOS ── -->
+  <section id="view-mispred" class="view">
+    <div class="card">
+      <div class="card-title">Mis pronósticos</div>
+      <div class="form-group">
+        <label>Filtrar por jornada</label>
+        <select id="mis-select-round" onchange="app.loadMyPredictions()">
+          <option value="all">Todas las jornadas</option>
+          <option value="1">Jornada 1</option>
+          <option value="2">Jornada 2</option>
+          <option value="3">Jornada 3</option>
+          <option value="4">Jornada 4</option>
+          <option value="5">Jornada 5</option>
+          <option value="6">Jornada 6</option>
+          <option value="7">Jornada 7</option>
+          <option value="8">Jornada 8</option>
+          <option value="16avos">16avos</option>
+          <option value="8avos">Octavos</option>
+          <option value="4avos">Cuartos</option>
+          <option value="SF">Semifinales</option>
+          <option value="Final">Final</option>
+        </select>
+      </div>
+    </div>
+    <div id="mis-total-card"></div>
+    <div id="mis-pred-list"></div>
+  </section>
+
+  <!-- ── RANKING ── -->
+  <section id="view-ranking" class="view">
+    <div class="card">
+      <div class="card-title">Clasificación general</div>
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Jugador</th>
+            <th style="text-align:right">Puntos</th>
+          </tr>
+        </thead>
+        <tbody id="ranking-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── ADMIN ── -->
+  <section id="view-admin" class="view">
+    <div class="card">
+      <div class="card-title">Registrar partido</div>
+      <div class="form-group">
+        <label>Jornada</label>
+        <select id="match-round">
+          <option value="1">Jornada 1 — 8-10 sep 2026</option>
+          <option value="2">Jornada 2 — 13/14 oct 2026</option>
+          <option value="3">Jornada 3 — 20/21 oct 2026</option>
+          <option value="4">Jornada 4 — 3/4 nov 2026</option>
+          <option value="5">Jornada 5 — 24/25 nov 2026</option>
+          <option value="6">Jornada 6 — 8/9 dic 2026</option>
+          <option value="7">Jornada 7 — 19/20 ene 2027</option>
+          <option value="8">Jornada 8 — 27 ene 2027</option>
+          <option value="16avos">16avos de final</option>
+          <option value="8avos">Octavos de final</option>
+          <option value="4avos">Cuartos de final</option>
+          <option value="SF">Semifinales</option>
+          <option value="Final">Final — 5 jun 2027</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Equipo local (sede)</label>
+        <select id="match-home"></select>
+      </div>
+      <div class="form-group">
+        <label>Equipo visitante</label>
+        <select id="match-away"></select>
+      </div>
+      <div class="form-group">
+        <label>Fecha y hora del partido</label>
+        <input type="datetime-local" id="match-date">
+      </div>
+      <button onclick="app.publishMatch()">Publicar partido</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Ingresar resultado oficial</div>
+      <div class="form-group">
+        <label>Partido</label>
+        <select id="admin-match-select"></select>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:8px; align-items:center; margin-bottom:12px;">
+        <input type="number" id="admin-goles-local" min="0" max="20" placeholder="0" style="text-align:center; font-size:1.2rem; font-weight:700;">
+        <span style="text-align:center; color:var(--text-muted); font-size:1.2rem;">–</span>
+        <input type="number" id="admin-goles-visita" min="0" max="20" placeholder="0" style="text-align:center; font-size:1.2rem; font-weight:700;">
+      </div>
+      <button class="secondary" onclick="app.loadAdminMatches()" style="margin-bottom:8px;">Cargar partidos</button>
+      <button onclick="app.saveOfficialResult()">Guardar resultado y calcular puntos</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Cargar pronóstico manual</div>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;">
+        Para ingresar apuestas de jugadores en partidos ya cerrados.
+      </p>
+      <div class="form-group">
+        <label>Partido</label>
+        <select id="manual-match-select"></select>
+      </div>
+      <div class="form-group">
+        <label>Nombre del jugador</label>
+        <input type="text" id="manual-username" placeholder="Ej: Luis25">
+      </div>
+      <div class="form-group">
+        <label>¿Quién gana? (obligatorio)</label>
+        <select id="manual-ganador">
+          <option value="">— Selecciona —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Marcador exacto (opcional — +5 pts)</label>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;">
+          <input type="number" id="manual-goles-local" min="0" max="20" placeholder="0" style="text-align:center;font-size:1.1rem;font-weight:700;">
+          <span style="text-align:center;color:var(--text-muted);font-size:1.2rem;">–</span>
+          <input type="number" id="manual-goles-visita" min="0" max="20" placeholder="0" style="text-align:center;font-size:1.1rem;font-weight:700;">
+        </div>
+      </div>
+      <button onclick="app.saveManualPrediction()">Guardar pronóstico manual</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item" id="nav-predictions" onclick="app.navigate('view-predictions')">
+    <span class="nav-icon">⚽</span><span>Quiniela</span>
+  </button>
+  <button class="nav-item" id="nav-mispred" onclick="app.navigate('view-mispred')">
+    <span class="nav-icon">🎯</span><span>Mis apuestas</span>
+  </button>
+  <button class="nav-item" id="nav-ranking" onclick="app.navigate('view-ranking')">
+    <span class="nav-icon">🏆</span><span>Ranking</span>
+  </button>
+  <button class="nav-item" id="nav-admin" onclick="app.openAdmin()">
+    <span class="nav-icon">⚙️</span><span>Admin</span>
+  </button>
+  <button class="nav-item" onclick="app.logout()">
+    <span class="nav-icon">🚪</span><span>Salir</span>
+  </button>
+</nav>
+
+<!-- PIN ADMIN OVERLAY -->
+<div class="pin-overlay" id="pin-overlay">
+  <div class="pin-box">
+    <h2>🔒 Panel de administrador</h2>
+    <div class="form-group">
+      <label>PIN de acceso</label>
+      <input type="password" id="pin-input" placeholder="••••" maxlength="8">
+    </div>
+    <div style="display:flex; gap:8px; margin-top:12px;">
+      <button onclick="app.checkPin()">Entrar</button>
+      <button class="secondary" onclick="app.closePin()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, getDoc, query, where, orderBy, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+/* ── FIREBASE CONFIG ── */
+const firebaseConfig = {
+  apiKey: "AIzaSyDff6f06jAPxmH8zL2bo3N0nPKGUf5109A",
+  authDomain: "quinielaluan.firebaseapp.com",
+  projectId: "quinielaluan",
+  storageBucket: "quinielaluan.firebasestorage.app",
+  messagingSenderId: "861747323783",
+  appId: "1:861747323783:web:0f603b3c55570a4cb1a922"
+};
+
+const ADMIN_PIN = "252525"; /* ← Cambia este PIN */
+
+/* ── EQUIPOS CHAMPIONS 2026/27 (36 oficiales UEFA) ── */
+const TEAMS = {
+  "aek":       { name: "AEK Athens",          flag: "🇬🇷" },
+  "arsenal":   { name: "Arsenal",              flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+  "astonvilla":{ name: "Aston Villa",          flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+  "atletico":  { name: "Atlético Madrid",      flag: "🇪🇸" },
+  "barcelona": { name: "Barcelona",            flag: "🇪🇸" },
+  "bayernm":   { name: "Bayern München",       flag: "🇩🇪" },
+  "bodo":      { name: "Bodø/Glimt",           flag: "🇳🇴" },
+  "dortmund":  { name: "Borussia Dortmund",    flag: "🇩🇪" },
+  "brugge":    { name: "Club Brugge",          flag: "🇧🇪" },
+  "como":      { name: "Como",                 flag: "🇮🇹" },
+  "fenerbahce":{ name: "Fenerbahçe",           flag: "🇹🇷" },
+  "feyenoord": { name: "Feyenoord",            flag: "🇳🇱" },
+  "galatasaray":{ name: "Galatasaray",         flag: "🇹🇷" },
+  "inter":     { name: "Inter de Milán",       flag: "🇮🇹" },
+  "lask":      { name: "LASK",                 flag: "🇦🇹" },
+  "leipzig":   { name: "RB Leipzig",           flag: "🇩🇪" },
+  "lens":      { name: "Lens",                 flag: "🇫🇷" },
+  "lille":     { name: "Lille",                flag: "🇫🇷" },
+  "liverpool": { name: "Liverpool",            flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+  "mancity":   { name: "Manchester City",      flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+  "manutd":    { name: "Manchester United",    flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+  "napoli":    { name: "Nápoles",              flag: "🇮🇹" },
+  "psg":       { name: "PSG",                  flag: "🇫🇷" },
+  "porto":     { name: "Porto",                flag: "🇵🇹" },
+  "psv":       { name: "PSV Eindhoven",        flag: "🇳🇱" },
+  "betis":     { name: "Real Betis",           flag: "🇪🇸" },
+  "realmadrid":{ name: "Real Madrid",          flag: "🇪🇸" },
+  "roma":      { name: "Roma",                 flag: "🇮🇹" },
+  "sabah":     { name: "Sabah Baku",           flag: "🇦🇿" },
+  "shakhtar":  { name: "Shakhtar Donetsk",     flag: "🇺🇦" },
+  "slavia":    { name: "Slavia Praha",         flag: "🇨🇿" },
+  "slovan":    { name: "Slovan Bratislava",    flag: "🇸🇰" },
+  "sporting":  { name: "Sporting CP",          flag: "🇵🇹" },
+  "stuttgart": { name: "Stuttgart",            flag: "🇩🇪" },
+  "viking":    { name: "Viking",               flag: "🇳🇴" },
+  "villarreal":{ name: "Villarreal",           flag: "🇪🇸" }
+};
+
+/* ── INIT FIREBASE ── */
+const fbApp = initializeApp(firebaseConfig);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
+
+/* ─────────────────────────────────────────
+   CLASE PRINCIPAL
+───────────────────────────────────────── */
+class QuinielaEngine {
+  constructor() {
+    this.currentUser = null;
+    this.currentUsername = null;
+    this.adminUnlocked = false;
+    this._initSelects();
+    this._initListeners();
+  }
+
+  /* ── TOAST ── */
+  toast(msg, tipo = 'ok') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + tipo;
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => t.className = 'toast', 2600);
+  }
+
+  /* ── NAVEGACIÓN ── */
+  navigate(viewId) {
+    if (!this.currentUser && viewId !== 'view-auth') {
+      this.toast('Inicia sesión primero', 'err'); return;
+    }
+    document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+    const navId = 'nav-' + viewId.replace('view-', '');
+    const navBtn = document.getElementById(navId);
+    if (navBtn) navBtn.classList.add('active');
+
+    if (viewId === 'view-predictions') this.loadMatchesForUser();
+    if (viewId === 'view-mispred')     this.loadMyPredictions();
+    if (viewId === 'view-ranking')     this.loadRanking();
+  }
+
+  /* ── SELECTS EQUIPOS ── */
+  _initSelects() {
+    ['match-home', 'match-away'].forEach(id => {
+      const sel = document.getElementById(id);
+      sel.innerHTML = '<option value="">— Selecciona equipo —</option>';
+      Object.entries(TEAMS).sort((a,b) => a[1].name.localeCompare(b[1].name)).forEach(([k, t]) => {
+        sel.add(new Option(`${t.flag} ${t.name}`, k));
+      });
+    });
+  }
+
+  /* ── LISTENERS AUTH ── */
+  _initListeners() {
+    document.getElementById('btn-login').addEventListener('click', () => this.login());
+    document.getElementById('btn-register').addEventListener('click', () => this.register());
+    document.getElementById('auth-password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') this.login();
+    });
+    document.getElementById('pin-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') this.checkPin();
+    });
+  }
+
+  _toEmail(username) {
+    return username.toLowerCase().trim().replace(/[^a-z0-9]/g, '') + '@quinielaluan.app';
+  }
+
+  async login() {
+    const u = document.getElementById('auth-username').value.trim();
+    const p = document.getElementById('auth-password').value.trim();
+    if (!u || !p) { this.toast('Completa usuario y contraseña', 'err'); return; }
+    try {
+      await signInWithEmailAndPassword(auth, this._toEmail(u), p);
+      this.navigate('view-predictions');
+    } catch(e) {
+      this.toast('Usuario o contraseña incorrectos', 'err');
+    }
+  }
+
+  async register() {
+    const u = document.getElementById('auth-username').value.trim();
+    const p = document.getElementById('auth-password').value.trim();
+    if (!u || !p) { this.toast('Completa usuario y contraseña', 'err'); return; }
+    if (p.length < 6) { this.toast('Contraseña mínimo 6 caracteres', 'err'); return; }
+    try {
+      const res = await createUserWithEmailAndPassword(auth, this._toEmail(u), p);
+      await setDoc(doc(db, 'users', res.user.uid), {
+        username: u, points: 0, createdAt: serverTimestamp()
+      });
+      this.toast('¡Registro exitoso!', 'ok');
+      this.navigate('view-predictions');
+    } catch(e) {
+      if (e.code === 'auth/email-already-in-use') {
+        this.toast('Ese nombre ya existe, intenta con otro', 'err');
+      } else {
+        this.toast('Error al registrarse', 'err');
+      }
+    }
+  }
+
+  async logout() {
+    await signOut(auth);
+    this.adminUnlocked = false;
+    document.getElementById('user-display').textContent = 'Invitado';
+    document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+    document.getElementById('view-auth').classList.add('active');
+  }
+
+  /* ── ADMIN PIN ── */
+  openAdmin() {
+    if (!this.currentUser) { this.toast('Inicia sesión primero', 'err'); return; }
+    if (this.adminUnlocked) { this.navigate('view-admin'); return; }
+    document.getElementById('pin-overlay').classList.add('show');
+    setTimeout(() => document.getElementById('pin-input').focus(), 100);
+  }
+  closePin() {
+    document.getElementById('pin-overlay').classList.remove('show');
+    document.getElementById('pin-input').value = '';
+  }
+  checkPin() {
+    if (document.getElementById('pin-input').value === ADMIN_PIN) {
+      this.adminUnlocked = true;
+      this.closePin();
+      this.loadAdminMatches();
+      this.navigate('view-admin');
+    } else {
+      this.toast('PIN incorrecto', 'err');
+      document.getElementById('pin-input').value = '';
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     CARGAR PARTIDOS PARA APOSTAR
+  ───────────────────────────────────────── */
+  async loadMatchesForUser() {
+    if (!this.currentUser) return;
+    const round = document.getElementById('user-select-round').value;
+    const container = document.getElementById('user-matches-list');
+    container.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px">Cargando...</p>';
+
+    try {
+      const qM = query(collection(db, 'matches'), where('round', '==', round));
+      const matchSnap = await getDocs(qM);
+
+      if (matchSnap.empty) {
+        container.innerHTML = '<div class="empty-state"><div class="big">📋</div>Sin partidos en esta jornada.</div>';
+        return;
+      }
+
+      /* Pronósticos existentes del usuario */
+      const qP = query(collection(db, 'predictions'), where('userId', '==', this.currentUser.uid));
+      const predSnap = await getDocs(qP);
+      const myPreds = {};
+      predSnap.forEach(d => { myPreds[d.data().matchId] = d.data(); });
+
+      container.innerHTML = '';
+      const now = new Date();
+
+      matchSnap.forEach(docSnap => {
+        const m = { id: docSnap.id, ...docSnap.data() };
+        const home = TEAMS[m.homeTeamId] || { name: m.homeTeamId, flag: '⚽' };
+        const away = TEAMS[m.awayTeamId] || { name: m.awayTeamId, flag: '⚽' };
+        const locked = (m.matchDate && now >= new Date(m.matchDate)) || m.status === 'FINISHED';
+        const pred = myPreds[m.id] || {};
+
+        const card = document.createElement('div');
+        card.className = 'match-card';
+
+        /* Estado y resultado si ya terminó */
+        let resultHtml = '';
+        if (m.status === 'FINISHED' && m.golesLocal !== null && m.golesLocal !== undefined) {
+          resultHtml = `<div style="text-align:center;font-size:0.8rem;color:var(--text-muted)">
+            Resultado oficial: <strong style="color:#fff">${m.golesLocal} – ${m.golesVisita}</strong>
+            · Ganó: <strong style="color:var(--gold-color)">${m.ganador || '—'}</strong>
+          </div>`;
+          if (pred.calculado) {
+            const ptsBadge = pred.pts >= 5 ? 'badge-pts5' : pred.pts >= 3 ? 'badge-pts3' : 'badge-pts0';
+            resultHtml += `<div style="text-align:center;margin-top:4px">
+              <span class="badge ${ptsBadge}">Tu pronóstico: ${pred.pts} pts</span>
+            </div>`;
+          }
+        }
+
+        card.innerHTML = `
+          <div class="match-header">
+            <span>${m.matchDate ? new Date(m.matchDate).toLocaleString('es-VE',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : 'Sin fecha'}</span>
+            <span class="badge ${locked ? 'badge-closed' : 'badge-open'}">${locked ? 'Cerrado' : 'Abierto'}</span>
+          </div>
+          <div class="match-body">
+            <div class="team-info">
+              <span class="team-flag">${home.flag}</span>
+              <span class="team-name">${home.name}</span>
+            </div>
+            <span style="color:var(--text-muted);font-size:1rem">vs</span>
+            <div class="team-info">
+              <span class="team-flag">${away.flag}</span>
+              <span class="team-name">${away.name}</span>
+            </div>
+          </div>
+
+          ${!locked ? `
+          <div>
+            <span class="winner-label">¿Quién gana? (obligatorio)</span>
+            <div class="winner-row" id="wrow-${m.id}">
+              <button class="winner-btn ${pred.ganador === home.name ? 'selected':''}"
+                onclick="app._selectWinner('${m.id}','${home.name}',this)">
+                ${home.flag}<br>${home.name}
+              </button>
+              <button class="winner-btn ${pred.ganador === 'Empate' ? 'selected':''}"
+                onclick="app._selectWinner('${m.id}','Empate',this)">
+                🤝<br>Empate
+              </button>
+              <button class="winner-btn ${pred.ganador === away.name ? 'selected':''}"
+                onclick="app._selectWinner('${m.id}','${away.name}',this)">
+                ${away.flag}<br>${away.name}
+              </button>
+            </div>
+          </div>
+          <div>
+            <span class="winner-label">Marcador exacto (opcional — +5 pts)</span>
+            <div class="score-inputs" style="justify-content:center;">
+              <input type="number" id="ph-${m.id}" min="0" max="20"
+                value="${pred.golesLocal ?? ''}" placeholder="0" style="width:50px;height:42px;text-align:center;font-size:1.1rem;font-weight:700;">
+              <span style="color:var(--text-muted);font-size:1.2rem;padding:0 6px">–</span>
+              <input type="number" id="pa-${m.id}" min="0" max="20"
+                value="${pred.golesVisita ?? ''}" placeholder="0" style="width:50px;height:42px;text-align:center;font-size:1.1rem;font-weight:700;">
+            </div>
+          </div>
+          <button onclick="app.savePrediction('${m.id}','${home.name}','${away.name}')">
+            Guardar pronóstico
+          </button>` : `
+          <div style="font-size:0.8rem;color:var(--text-muted);text-align:center">
+            ${pred.ganador ? `Tu apuesta: <strong style="color:#fff">${pred.ganador}</strong>${pred.golesLocal !== undefined && pred.golesLocal !== null ? ` · ${pred.golesLocal}–${pred.golesVisita}` : ''}` : 'No apostaste en este partido'}
+          </div>`}
+          ${resultHtml}
+        `;
+        container.appendChild(card);
+      });
+
+    } catch(e) {
+      container.innerHTML = '<div class="empty-state"><div class="big">⚠️</div>Error al cargar partidos.</div>';
+      console.error(e);
+    }
+  }
+
+  /* Selecciona el ganador visualmente */
+  _selectWinner(matchId, team, btn) {
+    const row = document.getElementById('wrow-' + matchId);
+    row.querySelectorAll('.winner-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    btn.dataset.selected = team;
+  }
+  _getWinner(matchId) {
+    const row = document.getElementById('wrow-' + matchId);
+    if (!row) return null;
+    const sel = row.querySelector('.winner-btn.selected');
+    return sel ? sel.dataset.selected || sel.textContent.trim().split('\n').pop().trim() : null;
+  }
+
+  /* ── GUARDAR PRONÓSTICO ── */
+  async savePrediction(matchId, homeName, awayName) {
+    if (!this.currentUser) { this.toast('Inicia sesión primero', 'err'); return; }
+
+    const ganador = this._getWinner(matchId);
+    if (!ganador) { this.toast('Selecciona un ganador', 'err'); return; }
+
+    const gL = document.getElementById('ph-' + matchId).value;
+    const gA = document.getElementById('pa-' + matchId).value;
+
+    const data = {
+      userId:      this.currentUser.uid,
+      username:    this.currentUsername,
+      matchId,
+      homeName,
+      awayName,
+      ganador,
+      golesLocal:  gL !== '' ? parseInt(gL) : null,
+      golesVisita: gA !== '' ? parseInt(gA) : null,
+      pts:         0,
+      calculado:   false,
+      updatedAt:   serverTimestamp()
+    };
+
+    try {
+      await setDoc(doc(db, 'predictions', `${this.currentUser.uid}_${matchId}`), data);
+      this.toast('✓ Pronóstico guardado', 'ok');
+    } catch(e) {
+      this.toast('Error al guardar', 'err');
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     MIS PRONÓSTICOS
+  ───────────────────────────────────────── */
+  async loadMyPredictions() {
+    if (!this.currentUser) return;
+    const round = document.getElementById('mis-select-round').value;
+    const list = document.getElementById('mis-pred-list');
+    const totalCard = document.getElementById('mis-total-card');
+    list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px">Cargando...</p>';
+
+    try {
+      let q = query(collection(db, 'predictions'), where('userId', '==', this.currentUser.uid));
+      const snap = await getDocs(q);
+      let preds = [];
+      snap.forEach(d => preds.push(d.data()));
+
+      /* filtrar jornada si no es "all" */
+      if (round !== 'all') {
+        /* necesitamos el round del match */
+        const matchIds = preds.map(p => p.matchId);
+        if (matchIds.length === 0) { list.innerHTML = '<div class="empty-state"><div class="big">🎯</div>Sin pronósticos aún.</div>'; return; }
+        /* traer matches para cruzar */
+        const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', round)));
+        const mIds = new Set();
+        mSnap.forEach(d => mIds.add(d.id));
+        preds = preds.filter(p => mIds.has(p.matchId));
+      }
+
+      if (preds.length === 0) {
+        totalCard.innerHTML = '';
+        list.innerHTML = '<div class="empty-state"><div class="big">🎯</div>Sin pronósticos en esta jornada.</div>';
+        return;
+      }
+
+      let total = 0;
+      let calculados = 0;
+      preds.forEach(p => { if (p.calculado) { total += (p.pts || 0); calculados++; } });
+
+      totalCard.innerHTML = `
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase">Total acumulado</div>
+            <div style="font-size:1.8rem;font-weight:700;color:var(--gold-color)">${total} pts</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:0.75rem;color:var(--text-muted)">Calculados</div>
+            <div style="font-size:1.2rem;font-weight:600">${calculados} / ${preds.length}</div>
+          </div>
+        </div>`;
+
+      list.innerHTML = '';
+      preds.forEach(p => {
+        let ptsBadge = '';
+        if (p.calculado) {
+          const cls = p.pts >= 5 ? 'badge-pts5' : p.pts >= 3 ? 'badge-pts3' : 'badge-pts0';
+          const label = p.pts >= 5 ? '5 pts — Exacto 🎯' : p.pts >= 3 ? '3 pts — Ganador ✓' : '0 pts — Falló ✗';
+          ptsBadge = `<span class="badge ${cls}">${label}</span>`;
+        } else {
+          ptsBadge = `<span class="badge" style="background:rgba(139,148,158,0.15);color:var(--text-muted)">Pendiente</span>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'match-card';
+        card.innerHTML = `
+          <div style="font-weight:600">${p.homeName} vs ${p.awayName}</div>
+          <div class="pred-result-row">
+            <div style="color:var(--text-muted)">
+              Ganador: <strong style="color:#fff">${p.ganador}</strong>
+              ${p.golesLocal !== null && p.golesLocal !== undefined ? ` · Marcador: <strong style="color:#fff">${p.golesLocal}–${p.golesVisita}</strong>` : ''}
+            </div>
+            ${ptsBadge}
+          </div>
+          ${p.calculado && p.resultado ? `
+            <div style="font-size:0.75rem;color:var(--text-muted)">
+              Resultado real: ${p.resultado.golesLocal}–${p.resultado.golesVisita} (${p.resultado.ganador})
+            </div>` : ''}
+        `;
+        list.appendChild(card);
+      });
+
+    } catch(e) {
+      list.innerHTML = '<div class="empty-state"><div class="big">⚠️</div>Error al cargar.</div>';
+      console.error(e);
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     RANKING
+  ───────────────────────────────────────── */
+  async loadRanking() {
+    const tbody = document.getElementById('ranking-body');
+    tbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted)">Cargando...</td></tr>';
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      const users = [];
+      snap.forEach(d => users.push(d.data()));
+      users.sort((a, b) => (b.points || 0) - (a.points || 0));
+
+      tbody.innerHTML = '';
+      users.forEach((u, i) => {
+        const pos = i + 1;
+        const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : pos;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="rank-medal">${medal}</span></td>
+          <td>${u.username || '—'}</td>
+          <td>${u.points || 0}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch(e) {
+      tbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted)">Sin datos.</td></tr>';
+    }
+  }
+
+  /* ─────────────────────────────────────────
+     ADMIN — PUBLICAR PARTIDO
+  ───────────────────────────────────────── */
+  async publishMatch() {
+    const round      = document.getElementById('match-round').value;
+    const homeTeamId = document.getElementById('match-home').value;
+    const awayTeamId = document.getElementById('match-away').value;
+    const matchDate  = document.getElementById('match-date').value;
+
+    if (!homeTeamId || !awayTeamId) { this.toast('Selecciona ambos equipos', 'err'); return; }
+    if (homeTeamId === awayTeamId)  { this.toast('Los equipos deben ser diferentes', 'err'); return; }
+
+    try {
+      await addDoc(collection(db, 'matches'), {
+        round, homeTeamId, awayTeamId,
+        matchDate: matchDate ? new Date(matchDate).toISOString() : null,
+        status: 'OPEN',
+        golesLocal: null, golesVisita: null, ganador: null
+      });
+      this.toast('✓ Partido publicado', 'ok');
+      this.loadAdminMatches();
+    } catch(e) {
+      this.toast('Error al publicar', 'err');
+    }
+  }
+
+  /* ── CARGAR SELECT DE PARTIDOS ADMIN ── */
+  async loadAdminMatches() {
+    const sel     = document.getElementById('admin-match-select');
+    const selMan  = document.getElementById('manual-match-select');
+    sel.innerHTML    = '<option value="">Cargando...</option>';
+    selMan.innerHTML = '<option value="">Cargando...</option>';
+    try {
+      const snap = await getDocs(query(collection(db, 'matches'), orderBy('round')));
+      sel.innerHTML    = '<option value="">— Selecciona partido —</option>';
+      selMan.innerHTML = '<option value="">— Selecciona partido —</option>';
+      snap.forEach(d => {
+        const m    = d.data();
+        const home = TEAMS[m.homeTeamId]?.name || m.homeTeamId;
+        const away = TEAMS[m.awayTeamId]?.name || m.awayTeamId;
+        const label = `${m.round}: ${home} vs ${away}${m.status==='FINISHED' ? ' ✓' : ''}`;
+
+        const opt1 = document.createElement('option');
+        opt1.value = d.id;
+        opt1.textContent = label;
+        sel.appendChild(opt1);
+
+        /* Para el select manual guardamos home/away en data attributes */
+        const opt2 = document.createElement('option');
+        opt2.value = d.id;
+        opt2.textContent = label;
+        opt2.dataset.home = home;
+        opt2.dataset.away = away;
+        selMan.appendChild(opt2);
+      });
+
+      /* Cuando cambia el partido manual, actualiza las opciones de ganador */
+      selMan.onchange = () => {
+        const chosen = selMan.options[selMan.selectedIndex];
+        const home = chosen.dataset.home || '';
+        const away = chosen.dataset.away || '';
+        const selG = document.getElementById('manual-ganador');
+        selG.innerHTML = '<option value="">— Selecciona —</option>';
+        if (home) {
+          selG.add(new Option(home, home));
+          selG.add(new Option('Empate', 'Empate'));
+          selG.add(new Option(away, away));
+        }
+      };
+
+    } catch(e) {
+      sel.innerHTML    = '<option>Error al cargar</option>';
+      selMan.innerHTML = '<option>Error al cargar</option>';
+    }
+  }
+
+  /* ── GUARDAR PRONÓSTICO MANUAL (admin) ── */
+  async saveManualPrediction() {
+    const matchId  = document.getElementById('manual-match-select').value;
+    const username = document.getElementById('manual-username').value.trim();
+    const ganador  = document.getElementById('manual-ganador').value;
+    const gL       = document.getElementById('manual-goles-local').value;
+    const gV       = document.getElementById('manual-goles-visita').value;
+
+    if (!matchId)  { this.toast('Selecciona un partido', 'err'); return; }
+    if (!username) { this.toast('Escribe el nombre del jugador', 'err'); return; }
+    if (!ganador)  { this.toast('Selecciona un ganador', 'err'); return; }
+
+    /* Obtener nombres del partido */
+    const chosen  = document.getElementById('manual-match-select').options[
+      document.getElementById('manual-match-select').selectedIndex
+    ];
+    const homeName = chosen.dataset.home || '';
+    const awayName = chosen.dataset.away || '';
+
+    /* Buscar el uid del jugador por username */
+    try {
+      const uSnap = await getDocs(
+        query(collection(db, 'users'), where('username', '==', username))
+      );
+      if (uSnap.empty) {
+        this.toast(`No existe el jugador "${username}"`, 'err'); return;
+      }
+      const uDoc = uSnap.docs[0];
+      const uid  = uDoc.id;
+
+      const data = {
+        userId:      uid,
+        username,
+        matchId,
+        homeName,
+        awayName,
+        ganador,
+        golesLocal:  gL !== '' ? parseInt(gL) : null,
+        golesVisita: gV !== '' ? parseInt(gV) : null,
+        pts:         0,
+        calculado:   false,
+        updatedAt:   serverTimestamp()
+      };
+
+      await setDoc(doc(db, 'predictions', `${uid}_${matchId}`), data);
+      this.toast(`✓ Pronóstico de ${username} guardado`, 'ok');
+
+      /* Limpiar campos */
+      document.getElementById('manual-username').value = '';
+      document.getElementById('manual-ganador').value  = '';
+      document.getElementById('manual-goles-local').value  = '';
+      document.getElementById('manual-goles-visita').value = '';
+
+    } catch(e) {
+      this.toast('Error al guardar pronóstico manual', 'err');
+      console.error(e);
+    }
+  }
+
+  /* ── GUARDAR RESULTADO OFICIAL Y CALCULAR PUNTOS ── */
+  async saveOfficialResult() {
+    const matchId = document.getElementById('admin-match-select').value;
+    const gL = document.getElementById('admin-goles-local').value;
+    const gV = document.getElementById('admin-goles-visita').value;
+
+    if (!matchId) { this.toast('Selecciona un partido', 'err'); return; }
+    if (gL === '' || gV === '') { this.toast('Ingresa el marcador completo', 'err'); return; }
+
+    const golesLocal  = parseInt(gL);
+    const golesVisita = parseInt(gV);
+
+    /* Determinar ganador real */
+    const mDoc = await getDoc(doc(db, 'matches', matchId));
+    if (!mDoc.exists()) { this.toast('Partido no encontrado', 'err'); return; }
+    const m = mDoc.data();
+    const homeTeam = TEAMS[m.homeTeamId]?.name || m.homeTeamId;
+    const awayTeam = TEAMS[m.awayTeamId]?.name || m.awayTeamId;
+
+    let ganador;
+    if      (golesLocal > golesVisita) ganador = homeTeam;
+    else if (golesVisita > golesLocal) ganador = awayTeam;
+    else                               ganador = 'Empate';
+
+    const resultado = { golesLocal, golesVisita, ganador };
+
+    try {
+      /* 1. Actualizar el partido */
+      await updateDoc(doc(db, 'matches', matchId), {
+        golesLocal, golesVisita, ganador, status: 'FINISHED'
+      });
+
+      /* 2. Traer todos los pronósticos de este partido */
+      const predSnap = await getDocs(
+        query(collection(db, 'predictions'), where('matchId', '==', matchId))
+      );
+
+      /* 3. Calcular puntos y acumular en users */
+      const batch = writeBatch(db);
+
+      /* Traer puntos actuales de los usuarios involucrados */
+      const userPoints = {};
+      for (const d of predSnap.docs) {
+        const uid = d.data().userId;
+        if (userPoints[uid] === undefined) {
+          const uDoc = await getDoc(doc(db, 'users', uid));
+          userPoints[uid] = uDoc.exists() ? (uDoc.data().points || 0) : 0;
+        }
+      }
+
+      predSnap.forEach(d => {
+        const p = d.data();
+        if (p.calculado) return; /* ya calculado, no recalcular */
+
+        const acertoGanador = p.ganador === ganador;
+        let pts = 0;
+
+        if (acertoGanador) {
+          const tieneMarcador = p.golesLocal !== null && p.golesLocal !== undefined
+                             && p.golesVisita !== null && p.golesVisita !== undefined;
+          if (tieneMarcador && p.golesLocal === golesLocal && p.golesVisita === golesVisita) {
+            pts = 5; /* exacto */
+          } else {
+            pts = 3; /* solo ganador */
+          }
+        }
+        /* 0 pts si falló ganador */
+
+        /* Actualizar pronóstico */
+        batch.update(d.ref, { pts, calculado: true, resultado });
+
+        /* Sumar al total del usuario */
+        userPoints[p.userId] = (userPoints[p.userId] || 0) + pts;
+      });
+
+      /* Escribir totales en users */
+      Object.entries(userPoints).forEach(([uid, pts]) => {
+        batch.update(doc(db, 'users', uid), { points: pts });
+      });
+
+      await batch.commit();
+      this.toast(`✓ ${ganador} · ${golesLocal}–${golesVisita} · Puntos calculados`, 'ok');
+      this.loadAdminMatches();
+
+    } catch(e) {
+      this.toast('Error al guardar resultado', 'err');
+      console.error(e);
+    }
+  }
+}
+
+}
+
+/* ── INIT ── */
+window.app = new QuinielaEngine();
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    window.app.currentUser = user;
+    const uDoc = await getDoc(doc(db, 'users', user.uid));
+    const username = uDoc.exists() ? (uDoc.data().username || 'Usuario') : 'Usuario';
+    window.app.currentUsername = username;
+    document.getElementById('user-display').textContent = username;
+    window.app.loadAdminMatches();
+  } else {
+    window.app.currentUser = null;
+    window.app.currentUsername = null;
+    document.getElementById('user-display').textContent = 'Invitado';
+  }
+});
+</script>
+</body>
+</html>
+
