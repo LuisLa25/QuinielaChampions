@@ -283,6 +283,35 @@
     </div>
   </section>
 
+  <!-- ── TODOS ── -->
+  <section id="view-todos" class="view">
+    <div class="card">
+      <div class="card-title">👁️ Apuestas de todos</div>
+      <div class="form-group">
+        <label>Jornada</label>
+        <select id="todos-select-round" onchange="app.loadTodos()">
+          <option value="1">Jornada 1 — 8-10 sep 2026</option>
+          <option value="2">Jornada 2 — 13/14 oct 2026</option>
+          <option value="3">Jornada 3 — 20/21 oct 2026</option>
+          <option value="4">Jornada 4 — 3/4 nov 2026</option>
+          <option value="5">Jornada 5 — 24/25 nov 2026</option>
+          <option value="6">Jornada 6 — 8/9 dic 2026</option>
+          <option value="7">Jornada 7 — 19/20 ene 2027</option>
+          <option value="8">Jornada 8 — 27 ene 2027</option>
+          <option value="16avos">16avos de final</option>
+          <option value="8avos">Octavos de final</option>
+          <option value="4avos">Cuartos de final</option>
+          <option value="SF">Semifinales</option>
+          <option value="Final">Final — 5 jun 2027</option>
+        </select>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">
+        Solo se muestran apuestas de partidos ya cerrados o finalizados.
+      </p>
+    </div>
+    <div id="todos-list"></div>
+  </section>
+
   <!-- ── ADMIN ── -->
   <section id="view-admin" class="view">
     <div class="card">
@@ -382,6 +411,9 @@
   <button class="nav-item" id="nav-admin" onclick="app.openAdmin()">
     <span class="nav-icon">⚙️</span><span>Admin</span>
   </button>
+  <button class="nav-item" id="nav-todos" onclick="app.navigate('view-todos')">
+    <span class="nav-icon">👁️</span><span>Todos</span>
+  </button>
   <button class="nav-item" onclick="app.logout()">
     <span class="nav-icon">🚪</span><span>Salir</span>
   </button>
@@ -420,7 +452,7 @@ const firebaseConfig = {
   appId: "1:861747323783:web:0f603b3c55570a4cb1a922"
 };
 
-const ADMIN_PIN = "252525"; /* ← Cambia este PIN */
+const ADMIN_PIN = "1234"; /* ← Cambia este PIN */
 
 /* ── EQUIPOS CHAMPIONS 2026/27 (36 oficiales UEFA) ── */
 const TEAMS = {
@@ -503,6 +535,7 @@ class QuinielaEngine {
     if (viewId === 'view-predictions') this.loadMatchesForUser();
     if (viewId === 'view-mispred')     this.loadMyPredictions();
     if (viewId === 'view-ranking')     this.loadRanking();
+    if (viewId === 'view-todos')       this.loadTodos();
   }
 
   /* ── SELECTS EQUIPOS ── */
@@ -842,6 +875,98 @@ class QuinielaEngine {
     }
   }
 
+
+  /* ─────────────────────────────────────────
+     VER APUESTAS DE TODOS
+  ───────────────────────────────────────── */
+  async loadTodos() {
+    if (!this.currentUser) return;
+    const round = document.getElementById('todos-select-round').value;
+    const lista = document.getElementById('todos-list');
+    lista.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px">Cargando...</p>';
+
+    try {
+      const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', round)));
+      const partidos = [];
+      mSnap.forEach(d => {
+        const m = { id: d.id, ...d.data() };
+        const now = new Date();
+        const cerrado = (m.matchDate && now >= new Date(m.matchDate)) || m.status === 'FINISHED';
+        if (cerrado) partidos.push(m);
+      });
+
+      if (partidos.length === 0) {
+        lista.innerHTML = '<div class="empty-state"><div class="big">🔒</div>Los partidos de esta jornada aún no han iniciado.<br><span style="font-size:0.8rem">Las apuestas se revelan cuando comienza cada partido.</span></div>';
+        return;
+      }
+
+      lista.innerHTML = '';
+
+      for (const m of partidos) {
+        const home = TEAMS[m.homeTeamId] || { name: m.homeTeamId, flag: '⚽' };
+        const away = TEAMS[m.awayTeamId] || { name: m.awayTeamId, flag: '⚽' };
+
+        const pSnap = await getDocs(query(collection(db, 'predictions'), where('matchId', '==', m.id)));
+        const apuestas = [];
+        pSnap.forEach(d => apuestas.push(d.data()));
+        apuestas.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+
+        const card = document.createElement('div');
+        card.className = 'match-card';
+
+        let resultHtml = '';
+        if (m.status === 'FINISHED' && m.golesLocal !== null) {
+          resultHtml = `<div style="text-align:center;font-size:0.8rem;padding:6px;background:rgba(241,224,90,0.08);border-radius:6px">
+            ⚽ Resultado: <strong style="color:#fff">${m.golesLocal}–${m.golesVisita}</strong>
+            · Ganó: <strong style="color:var(--gold-color)">${m.ganador}</strong>
+          </div>`;
+        }
+
+        let filas = '';
+        if (apuestas.length === 0) {
+          filas = '<div style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:8px">Sin apuestas registradas</div>';
+        } else {
+          apuestas.forEach(a => {
+            let ptsBadge = '';
+            if (a.calculado) {
+              const cls = a.pts >= 5 ? 'badge-pts5' : a.pts >= 3 ? 'badge-pts3' : 'badge-pts0';
+              ptsBadge = `<span class="badge ${cls}">${a.pts}pts</span>`;
+            }
+            const marcador = (a.golesLocal !== null && a.golesLocal !== undefined)
+              ? `${a.golesLocal}–${a.golesVisita}` : '—';
+            const esYo = a.userId === this.currentUser.uid
+              ? 'background:rgba(46,160,67,0.08);border-radius:6px;' : '';
+            filas += `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 4px;border-bottom:1px solid var(--border-color);${esYo}">
+              <div>
+                <strong style="font-size:0.85rem">${a.username || '?'}</strong>
+                ${a.userId === this.currentUser.uid ? '<span style="font-size:0.7rem;color:var(--accent-color);margin-left:4px">tú</span>' : ''}
+              </div>
+              <div style="text-align:right;font-size:0.8rem">
+                <div style="color:#fff;font-weight:600">${a.ganador}</div>
+                <div style="color:var(--text-muted)">${marcador}</div>
+              </div>
+              <div style="min-width:48px;text-align:right">${ptsBadge}</div>
+            </div>`;
+          });
+        }
+
+        card.innerHTML = `
+          <div class="match-header">
+            <span>${home.flag} ${home.name} vs ${away.flag} ${away.name}</span>
+            <span class="badge ${m.status === 'FINISHED' ? 'badge-pts5' : 'badge-closed'}">${m.status === 'FINISHED' ? 'Finalizado' : 'En curso'}</span>
+          </div>
+          ${resultHtml}
+          <div>${filas}</div>
+        `;
+        lista.appendChild(card);
+      }
+
+    } catch(e) {
+      lista.innerHTML = '<div class="empty-state"><div class="big">⚠️</div>Error al cargar.</div>';
+      console.error(e);
+    }
+  }
+
   /* ─────────────────────────────────────────
      RANKING
   ───────────────────────────────────────── */
@@ -1095,8 +1220,6 @@ class QuinielaEngine {
       console.error(e);
     }
   }
-}
-
 }
 
 /* ── INIT ── */
