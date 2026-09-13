@@ -811,7 +811,8 @@ class QuinielaEngine {
         const matchIds = preds.map(p => p.matchId);
         if (matchIds.length === 0) { list.innerHTML = '<div class="empty-state"><div class="big">🎯</div>Sin pronósticos aún.</div>'; return; }
         /* traer matches para cruzar */
-        const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', round)));
+        const roundVal = isNaN(round) ? round : parseInt(round);
+      const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', roundVal)));
         const mIds = new Set();
         mSnap.forEach(d => mIds.add(d.id));
         preds = preds.filter(p => mIds.has(p.matchId));
@@ -886,7 +887,8 @@ class QuinielaEngine {
     lista.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px">Cargando...</p>';
 
     try {
-      const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', round)));
+      const roundVal = isNaN(round) ? round : parseInt(round);
+      const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', roundVal)));
       const partidos = [];
       mSnap.forEach(d => {
         const m = { id: d.id, ...d.data() };
