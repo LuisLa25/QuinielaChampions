@@ -218,7 +218,7 @@
     <div class="card">
       <div class="form-group">
         <label>Liga</label>
-        <select id="user-select-liga" onchange="app.loadMatchesForUser()">
+        <select id="user-select-liga" onchange="app.fillRoundSelect('user-select-round','user-select-liga'); app.loadMatchesForUser()">
           <option value="champions">⭐ Champions League</option>
           <option value="europa">🟠 Europa League</option>
           <option value="premier">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
@@ -230,21 +230,7 @@
       </div>
       <div class="form-group">
         <label>Jornada</label>
-        <select id="user-select-round" onchange="app.loadMatchesForUser()">
-          <option value="1">Jornada 1 — 8-10 sep 2026</option>
-          <option value="2">Jornada 2 — 13/14 oct 2026</option>
-          <option value="3">Jornada 3 — 20/21 oct 2026</option>
-          <option value="4">Jornada 4 — 3/4 nov 2026</option>
-          <option value="5">Jornada 5 — 24/25 nov 2026</option>
-          <option value="6">Jornada 6 — 8/9 dic 2026</option>
-          <option value="7">Jornada 7 — 19/20 ene 2027</option>
-          <option value="8">Jornada 8 — 27 ene 2027</option>
-          <option value="16avos">16avos de final</option>
-          <option value="8avos">Octavos de final</option>
-          <option value="4avos">Cuartos de final</option>
-          <option value="SF">Semifinales</option>
-          <option value="Final">Final — 5 jun 2027</option>
-        </select>
+        <select id="user-select-round" onchange="app.loadMatchesForUser()"></select>
       </div>
     </div>
     <div id="user-matches-list"></div>
@@ -301,7 +287,7 @@
       <div class="card-title">👁️ Apuestas de todos</div>
       <div class="form-group">
         <label>Liga</label>
-        <select id="todos-select-liga" onchange="app.loadTodos()">
+        <select id="todos-select-liga" onchange="app.fillRoundSelect('todos-select-round','todos-select-liga'); app.loadTodos()">
           <option value="champions">⭐ Champions League</option>
           <option value="europa">🟠 Europa League</option>
           <option value="premier">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
@@ -313,21 +299,7 @@
       </div>
       <div class="form-group">
         <label>Jornada</label>
-        <select id="todos-select-round" onchange="app.loadTodos()">
-          <option value="1">Jornada 1 — 8-10 sep 2026</option>
-          <option value="2">Jornada 2 — 13/14 oct 2026</option>
-          <option value="3">Jornada 3 — 20/21 oct 2026</option>
-          <option value="4">Jornada 4 — 3/4 nov 2026</option>
-          <option value="5">Jornada 5 — 24/25 nov 2026</option>
-          <option value="6">Jornada 6 — 8/9 dic 2026</option>
-          <option value="7">Jornada 7 — 19/20 ene 2027</option>
-          <option value="8">Jornada 8 — 27 ene 2027</option>
-          <option value="16avos">16avos de final</option>
-          <option value="8avos">Octavos de final</option>
-          <option value="4avos">Cuartos de final</option>
-          <option value="SF">Semifinales</option>
-          <option value="Final">Final — 5 jun 2027</option>
-        </select>
+        <select id="todos-select-round" onchange="app.loadTodos()"></select>
       </div>
       <p style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">
         Solo se muestran apuestas de partidos ya cerrados o finalizados.
@@ -342,7 +314,7 @@
       <div class="card-title">Registrar partido</div>
       <div class="form-group">
         <label>Liga</label>
-        <select id="match-liga" onchange="app.updateAdminTeams()">
+        <select id="match-liga" onchange="app.updateAdminTeams(); app.fillRoundSelect('match-round','match-liga')">
           <option value="champions">⭐ Champions League</option>
           <option value="europa">🟠 Europa League</option>
           <option value="premier">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
@@ -354,21 +326,7 @@
       </div>
       <div class="form-group">
         <label>Jornada</label>
-        <select id="match-round">
-          <option value="1">Jornada 1 — 8-10 sep 2026</option>
-          <option value="2">Jornada 2 — 13/14 oct 2026</option>
-          <option value="3">Jornada 3 — 20/21 oct 2026</option>
-          <option value="4">Jornada 4 — 3/4 nov 2026</option>
-          <option value="5">Jornada 5 — 24/25 nov 2026</option>
-          <option value="6">Jornada 6 — 8/9 dic 2026</option>
-          <option value="7">Jornada 7 — 19/20 ene 2027</option>
-          <option value="8">Jornada 8 — 27 ene 2027</option>
-          <option value="16avos">16avos de final</option>
-          <option value="8avos">Octavos de final</option>
-          <option value="4avos">Cuartos de final</option>
-          <option value="SF">Semifinales</option>
-          <option value="Final">Final — 5 jun 2027</option>
-        </select>
+        <select id="match-round"></select>
       </div>
       <div class="form-group">
         <label>Equipo local (sede)</label>
@@ -703,6 +661,36 @@ class QuinielaEngine {
     this._toastTimer = setTimeout(() => t.className = 'toast', 2600);
   }
 
+
+  /* ── JORNADAS POR LIGA ── */
+  getRoundsForLeague(liga) {
+    const CHAMPIONS_ROUNDS = [
+      ['1','Jornada 1 — 8-10 sep 2026'], ['2','Jornada 2 — 13/14 oct 2026'],
+      ['3','Jornada 3 — 20/21 oct 2026'], ['4','Jornada 4 — 3/4 nov 2026'],
+      ['5','Jornada 5 — 24/25 nov 2026'], ['6','Jornada 6 — 8/9 dic 2026'],
+      ['7','Jornada 7 — 19/20 ene 2027'], ['8','Jornada 8 — 27 ene 2027'],
+      ['16avos','16avos de final'], ['8avos','Octavos de final'],
+      ['4avos','Cuartos de final'], ['SF','Semifinales'],
+      ['Final','Final — 5 jun 2027']
+    ];
+    if (liga === 'champions' || liga === 'europa') return CHAMPIONS_ROUNDS;
+    const total = (liga === 'bundesliga' || liga === 'ligue1') ? 34 : 38;
+    const rounds = [];
+    for (let i = 1; i <= total; i++) rounds.push([String(i), `Jornada ${i}`]);
+    return rounds;
+  }
+
+  fillRoundSelect(selectId, ligaSelectId) {
+    const liga = document.getElementById(ligaSelectId)?.value || 'champions';
+    const sel = document.getElementById(selectId);
+    const current = sel.value;
+    sel.innerHTML = '';
+    this.getRoundsForLeague(liga).forEach(([val, label]) => {
+      sel.add(new Option(label, val));
+    });
+    if ([...sel.options].some(o => o.value === current)) sel.value = current;
+  }
+
   /* ── NAVEGACIÓN ── */
   navigate(viewId) {
     if (!this.currentUser && viewId !== 'view-auth') {
@@ -715,10 +703,10 @@ class QuinielaEngine {
     const navBtn = document.getElementById(navId);
     if (navBtn) navBtn.classList.add('active');
 
-    if (viewId === 'view-predictions') this.loadMatchesForUser();
+    if (viewId === 'view-predictions') { this.fillRoundSelect('user-select-round','user-select-liga'); this.loadMatchesForUser(); }
     if (viewId === 'view-mispred')     this.loadMyPredictions();
     if (viewId === 'view-ranking')     this.loadRanking();
-    if (viewId === 'view-todos')       this.loadTodos();
+    if (viewId === 'view-todos')       { this.fillRoundSelect('todos-select-round','todos-select-liga'); this.loadTodos(); }
   }
 
   /* ── SELECTS EQUIPOS ── */
@@ -728,6 +716,7 @@ class QuinielaEngine {
 
   updateAdminTeams() {
     const liga = document.getElementById('match-liga')?.value || 'champions';
+    if (!document.getElementById('match-round').options.length) this.fillRoundSelect('match-round','match-liga');
     const teams = LEAGUES[liga]?.teams || TEAMS;
     ['match-home', 'match-away'].forEach(id => {
       const sel = document.getElementById(id);
