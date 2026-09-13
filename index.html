@@ -217,6 +217,18 @@
   <section id="view-predictions" class="view">
     <div class="card">
       <div class="form-group">
+        <label>Liga</label>
+        <select id="user-select-liga" onchange="app.loadMatchesForUser()">
+          <option value="champions">⭐ Champions League</option>
+          <option value="europa">🟠 Europa League</option>
+          <option value="premier">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
+          <option value="laliga">🇪🇸 LaLiga</option>
+          <option value="seriea">🇮🇹 Serie A</option>
+          <option value="ligue1">🇫🇷 Ligue 1</option>
+          <option value="bundesliga">🇩🇪 Bundesliga</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>Jornada</label>
         <select id="user-select-round" onchange="app.loadMatchesForUser()">
           <option value="1">Jornada 1 — 8-10 sep 2026</option>
@@ -288,6 +300,18 @@
     <div class="card">
       <div class="card-title">👁️ Apuestas de todos</div>
       <div class="form-group">
+        <label>Liga</label>
+        <select id="todos-select-liga" onchange="app.loadTodos()">
+          <option value="champions">⭐ Champions League</option>
+          <option value="europa">🟠 Europa League</option>
+          <option value="premier">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
+          <option value="laliga">🇪🇸 LaLiga</option>
+          <option value="seriea">🇮🇹 Serie A</option>
+          <option value="ligue1">🇫🇷 Ligue 1</option>
+          <option value="bundesliga">🇩🇪 Bundesliga</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>Jornada</label>
         <select id="todos-select-round" onchange="app.loadTodos()">
           <option value="1">Jornada 1 — 8-10 sep 2026</option>
@@ -316,6 +340,18 @@
   <section id="view-admin" class="view">
     <div class="card">
       <div class="card-title">Registrar partido</div>
+      <div class="form-group">
+        <label>Liga</label>
+        <select id="match-liga" onchange="app.updateAdminTeams()">
+          <option value="champions">⭐ Champions League</option>
+          <option value="europa">🟠 Europa League</option>
+          <option value="premier">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
+          <option value="laliga">🇪🇸 LaLiga</option>
+          <option value="seriea">🇮🇹 Serie A</option>
+          <option value="ligue1">🇫🇷 Ligue 1</option>
+          <option value="bundesliga">🇩🇪 Bundesliga</option>
+        </select>
+      </div>
       <div class="form-group">
         <label>Jornada</label>
         <select id="match-round">
@@ -494,6 +530,153 @@ const TEAMS = {
   "villarreal":{ name: "Villarreal",           flag: "🇪🇸" }
 };
 
+const LEAGUES = {
+  "champions": { name: "Champions League", icon: "⭐", teams: TEAMS },
+"bundesliga": {
+    "friburgo":    { name: "Friburgo",            flag: "🇩🇪" },
+    "dortmund2":   { name: "Borussia Dortmund",   flag: "🇩🇪" },
+    "augsburgo":   { name: "Augsburgo",            flag: "🇩🇪" },
+    "elversberg":  { name: "Elversberg",           flag: "🇩🇪" },
+    "bayernm2":    { name: "Bayern Múnich",        flag: "🇩🇪" },
+    "leverkusen":  { name: "Bayer Leverkusen",     flag: "🇩🇪" },
+    "mainz":       { name: "Mainz",                flag: "🇩🇪" },
+    "eintracht":   { name: "Eintracht Fráncfort",  flag: "🇩🇪" },
+    "werder":      { name: "Werder Bremen",         flag: "🇩🇪" },
+    "schalke":     { name: "Schalke",              flag: "🇩🇪" },
+    "colonia":     { name: "Colonia",              flag: "🇩🇪" },
+    "leipzig2":    { name: "RB Leipzig",           flag: "🇩🇪" },
+    "hoffenheim":  { name: "Hoffenheim",           flag: "🇩🇪" },
+    "stuttgart2":  { name: "Stuttgart",            flag: "🇩🇪" },
+    "paderborn":   { name: "Paderborn",            flag: "🇩🇪" },
+    "unionberlin": { name: "Union Berlin",         flag: "🇩🇪" },
+    "hamburgo":    { name: "Hamburgo",             flag: "🇩🇪" },
+    "mgladbach":   { name: "Borussia M'gladbach",  flag: "🇩🇪" }
+  },
+  "laliga": {
+    "barcelona2":  { name: "Barcelona",            flag: "🇪🇸" },
+    "realmadrid2": { name: "Real Madrid",          flag: "🇪🇸" },
+    "alaves":      { name: "Alavés",               flag: "🇪🇸" },
+    "sevilla":     { name: "Sevilla",              flag: "🇪🇸" },
+    "betis2":      { name: "Real Betis",           flag: "🇪🇸" },
+    "depocoruna":  { name: "Deportivo A Coruña",   flag: "🇪🇸" },
+    "espanyol":    { name: "Espanyol",             flag: "🇪🇸" },
+    "atletico2":   { name: "Atlético de Madrid",   flag: "🇪🇸" },
+    "athletic":    { name: "Athletic Club",        flag: "🇪🇸" },
+    "racing":      { name: "R. Racing Club",       flag: "🇪🇸" },
+    "realsociedad":{ name: "Real Sociedad",        flag: "🇪🇸" },
+    "osasuna":     { name: "Osasuna",              flag: "🇪🇸" },
+    "levante":     { name: "Levante",              flag: "🇪🇸" },
+    "getafe":      { name: "Getafe",               flag: "🇪🇸" },
+    "rayo":        { name: "Rayo Vallecano",       flag: "🇪🇸" },
+    "celta":       { name: "Celta de Vigo",        flag: "🇪🇸" },
+    "villarreal2": { name: "Villarreal",           flag: "🇪🇸" },
+    "malaga":      { name: "Málaga",               flag: "🇪🇸" },
+    "elche":       { name: "Elche",                flag: "🇪🇸" },
+    "valencia":    { name: "Valencia",             flag: "🇪🇸" }
+  },
+  "ligue1": {
+    "monaco":      { name: "Mónaco",              flag: "🇲🇨" },
+    "rennais":     { name: "Stade Rennais",       flag: "🇫🇷" },
+    "parisfc":     { name: "Paris FC",            flag: "🇫🇷" },
+    "lyon":        { name: "Lyon",                flag: "🇫🇷" },
+    "lille2":      { name: "Lille",               flag: "🇫🇷" },
+    "estrasburgo": { name: "Estrasburgo",         flag: "🇫🇷" },
+    "brest":       { name: "Brest",               flag: "🇫🇷" },
+    "lorient":     { name: "Lorient",             flag: "🇫🇷" },
+    "angers":      { name: "Angers",              flag: "🇫🇷" },
+    "troyes":      { name: "Troyes",              flag: "🇫🇷" },
+    "lens2":       { name: "Lens",                flag: "🇫🇷" },
+    "marsella":    { name: "Marsella",            flag: "🇫🇷" },
+    "auxerre":     { name: "Auxerre",             flag: "🇫🇷" },
+    "lemans":      { name: "Le Mans",             flag: "🇫🇷" },
+    "psg2":        { name: "PSG",                 flag: "🇫🇷" },
+    "lehavre":     { name: "Le Havre",            flag: "🇫🇷" },
+    "toulouse":    { name: "Toulouse",            flag: "🇫🇷" },
+    "niza":        { name: "Niza",                flag: "🇫🇷" }
+  },
+  "premier": {
+    "arsenal2":    { name: "Arsenal",             flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "mancity2":    { name: "Manchester City",     flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "hull":        { name: "Hull",                flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "chelsea":     { name: "Chelsea",             flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "brentford":   { name: "Brentford",           flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "liverpool2":  { name: "Liverpool",           flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "everton":     { name: "Everton",             flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "ipswich":     { name: "Ipswich",             flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "newcastle":   { name: "Newcastle",           flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "leeds":       { name: "Leeds Utd",           flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "nottingham":  { name: "Nottingham Forest",   flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "brighton":    { name: "Brighton",            flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "manutd2":     { name: "Manchester Utd",      flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "sunderland":  { name: "Sunderland",          flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "bournemouth": { name: "Bournemouth",         flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "crystalpalace":{ name: "Crystal Palace",    flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "tottenham":   { name: "Tottenham",           flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "fulham":      { name: "Fulham",              flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "astonvilla2": { name: "Aston Villa",         flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "coventry":    { name: "Coventry",            flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" }
+  },
+  "seriea": {
+    "lazio":       { name: "Lazio",               flag: "🇮🇹" },
+    "roma2":       { name: "Roma",                flag: "🇮🇹" },
+    "inter2":      { name: "Inter",               flag: "🇮🇹" },
+    "cagliari":    { name: "Cagliari",            flag: "🇮🇹" },
+    "acmilan":     { name: "AC Milan",            flag: "🇮🇹" },
+    "como2":       { name: "Como",                flag: "🇮🇹" },
+    "juventus":    { name: "Juventus",            flag: "🇮🇹" },
+    "frosinone":   { name: "Frosinone",           flag: "🇮🇹" },
+    "atalanta":    { name: "Atalanta",            flag: "🇮🇹" },
+    "udinese":     { name: "Udinese",             flag: "🇮🇹" },
+    "sassuolo":    { name: "Sassuolo",            flag: "🇮🇹" },
+    "napoli2":     { name: "Nápoles",             flag: "🇮🇹" },
+    "torino":      { name: "Torino",              flag: "🇮🇹" },
+    "lecce":       { name: "Lecce",               flag: "🇮🇹" },
+    "fiorentina":  { name: "Fiorentina",          flag: "🇮🇹" },
+    "bolonia":     { name: "Bolonia",             flag: "🇮🇹" },
+    "parma":       { name: "Parma",               flag: "🇮🇹" },
+    "monza":       { name: "Monza",               flag: "🇮🇹" },
+    "genoa":       { name: "Genoa",               flag: "🇮🇹" }
+  },
+  "europa": {
+    "sunderland2": { name: "Sunderland",          flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "crystalpal2": { name: "Crystal Palace",      flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "bournemo2":   { name: "Bournemouth",         flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+    "realsoc2":    { name: "Real Sociedad",       flag: "🇪🇸" },
+    "celta2":      { name: "Celta de Vigo",       flag: "🇪🇸" },
+    "salzburgo":   { name: "Salzburgo",           flag: "🇦🇹" },
+    "sturmgraz":   { name: "Sturm Graz",          flag: "🇦🇹" },
+    "plzen":       { name: "Plzen",               flag: "🇨🇿" },
+    "spartapraga": { name: "Sparta Praga",        flag: "🇨🇿" },
+    "anderlecht":  { name: "Anderlecht",          flag: "🇧🇪" },
+    "royalunion":  { name: "Royale Union SG",     flag: "🇧🇪" },
+    "marsella2":   { name: "Marsella",            flag: "🇫🇷" },
+    "rennais2":    { name: "Stade Rennais",       flag: "🇫🇷" },
+    "lyon2":       { name: "Lyon",                flag: "🇫🇷" },
+    "leverkusen2": { name: "Bayer Leverkusen",    flag: "🇩🇪" },
+    "hoffenheim2": { name: "Hoffenheim",          flag: "🇩🇪" },
+    "juventus2":   { name: "Juventus",            flag: "🇮🇹" },
+    "acmilan2":    { name: "AC Milan",            flag: "🇮🇹" },
+    "nijmegen":    { name: "Nijmegen",            flag: "🇳🇱" },
+    "azalkmaar":   { name: "AZ Alkmaar",          flag: "🇳🇱" },
+    "torreense":   { name: "Torreense",           flag: "🇵🇹" },
+    "levski":      { name: "Levski",              flag: "🇧🇬" },
+    "dinazagreb":  { name: "Dínamo Zagreb",       flag: "🇭🇷" },
+    "omonia":      { name: "Omonia",              flag: "🇨🇾" },
+    "oficreta":    { name: "OFI Creta",           flag: "🇬🇷" },
+    "olympiacos":  { name: "Olympiacos",          flag: "🇬🇷" },
+    "beersheva":   { name: "H. Beer Sheva",       flag: "🇮🇱" },
+    "lillestrom":  { name: "Lilleström",          flag: "🇳🇴" },
+    "jagiellonia": { name: "Jagiellonia",         flag: "🇵🇱" },
+    "lechpoznan":  { name: "Lech Poznan",         flag: "🇵🇱" },
+    "benfica":     { name: "Benfica",             flag: "🇵🇹" },
+    "celtic":      { name: "Celtic",              flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿" },
+    "celje":       { name: "Celje",               flag: "🇸🇮" },
+    "besiktas":    { name: "Beşiktaş",            flag: "🇹🇷" },
+    "ferencvaros": { name: "Ferencvaros",         flag: "🇭🇺" },
+    "araratarm":   { name: "Ararat-Armenia",      flag: "🇦🇲" }
+  }
+};
+
 /* ── INIT FIREBASE ── */
 const fbApp = initializeApp(firebaseConfig);
 const auth  = getAuth(fbApp);
@@ -540,10 +723,16 @@ class QuinielaEngine {
 
   /* ── SELECTS EQUIPOS ── */
   _initSelects() {
+    this.updateAdminTeams();
+  }
+
+  updateAdminTeams() {
+    const liga = document.getElementById('match-liga')?.value || 'champions';
+    const teams = LEAGUES[liga]?.teams || TEAMS;
     ['match-home', 'match-away'].forEach(id => {
       const sel = document.getElementById(id);
       sel.innerHTML = '<option value="">— Selecciona equipo —</option>';
-      Object.entries(TEAMS).sort((a,b) => a[1].name.localeCompare(b[1].name)).forEach(([k, t]) => {
+      Object.entries(teams).sort((a,b) => a[1].name.localeCompare(b[1].name)).forEach(([k, t]) => {
         sel.add(new Option(`${t.flag} ${t.name}`, k));
       });
     });
@@ -639,7 +828,8 @@ class QuinielaEngine {
     container.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px">Cargando...</p>';
 
     try {
-      const qM = query(collection(db, 'matches'), where('round', '==', round));
+      const liga = document.getElementById('user-select-liga')?.value || 'champions';
+      const qM = query(collection(db, 'matches'), where('round', '==', roundVal !== undefined ? roundVal : round), where('liga', '==', liga));
       const matchSnap = await getDocs(qM);
 
       if (matchSnap.empty) {
@@ -658,8 +848,9 @@ class QuinielaEngine {
 
       matchSnap.forEach(docSnap => {
         const m = { id: docSnap.id, ...docSnap.data() };
-        const home = TEAMS[m.homeTeamId] || { name: m.homeTeamId, flag: '⚽' };
-        const away = TEAMS[m.awayTeamId] || { name: m.awayTeamId, flag: '⚽' };
+        const leagueTeams = LEAGUES[m.liga || 'champions']?.teams || TEAMS;
+        const home = leagueTeams[m.homeTeamId] || TEAMS[m.homeTeamId] || { name: m.homeTeamId, flag: '⚽' };
+        const away = leagueTeams[m.awayTeamId] || TEAMS[m.awayTeamId] || { name: m.awayTeamId, flag: '⚽' };
         const locked = (m.matchDate && now >= new Date(m.matchDate)) || m.status === 'FINISHED';
         const pred = myPreds[m.id] || {};
 
@@ -812,7 +1003,8 @@ class QuinielaEngine {
         if (matchIds.length === 0) { list.innerHTML = '<div class="empty-state"><div class="big">🎯</div>Sin pronósticos aún.</div>'; return; }
         /* traer matches para cruzar */
         const roundVal = isNaN(round) ? round : parseInt(round);
-      const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', roundVal)));
+      const ligaTodos = document.getElementById('todos-select-liga')?.value || 'champions';
+      const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', roundVal), where('liga', '==', ligaTodos)));
         const mIds = new Set();
         mSnap.forEach(d => mIds.add(d.id));
         preds = preds.filter(p => mIds.has(p.matchId));
@@ -888,7 +1080,8 @@ class QuinielaEngine {
 
     try {
       const roundVal = isNaN(round) ? round : parseInt(round);
-      const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', roundVal)));
+      const ligaTodos = document.getElementById('todos-select-liga')?.value || 'champions';
+      const mSnap = await getDocs(query(collection(db, 'matches'), where('round', '==', roundVal), where('liga', '==', ligaTodos)));
       const partidos = [];
       mSnap.forEach(d => {
         const m = { id: d.id, ...d.data() };
@@ -905,8 +1098,9 @@ class QuinielaEngine {
       lista.innerHTML = '';
 
       for (const m of partidos) {
-        const home = TEAMS[m.homeTeamId] || { name: m.homeTeamId, flag: '⚽' };
-        const away = TEAMS[m.awayTeamId] || { name: m.awayTeamId, flag: '⚽' };
+        const leagueTodoTeams = LEAGUES[m.liga || 'champions']?.teams || TEAMS;
+        const home = leagueTodoTeams[m.homeTeamId] || TEAMS[m.homeTeamId] || { name: m.homeTeamId, flag: '⚽' };
+        const away = leagueTodoTeams[m.awayTeamId] || TEAMS[m.awayTeamId] || { name: m.awayTeamId, flag: '⚽' };
 
         const pSnap = await getDocs(query(collection(db, 'predictions'), where('matchId', '==', m.id)));
         const apuestas = [];
@@ -1011,8 +1205,9 @@ class QuinielaEngine {
     if (homeTeamId === awayTeamId)  { this.toast('Los equipos deben ser diferentes', 'err'); return; }
 
     try {
+      const liga = document.getElementById('match-liga')?.value || 'champions';
       await addDoc(collection(db, 'matches'), {
-        round, homeTeamId, awayTeamId,
+        round, liga, homeTeamId, awayTeamId,
         matchDate: matchDate ? new Date(matchDate).toISOString() : null,
         status: 'OPEN',
         golesLocal: null, golesVisita: null, ganador: null
