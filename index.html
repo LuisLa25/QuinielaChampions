@@ -716,6 +716,7 @@ class QuinielaEngine {
 
   updateAdminTeams() {
     const liga = document.getElementById('match-liga')?.value || 'champions';
+    this.toast('DEBUG liga=' + liga, 'ok');
     if (!document.getElementById('match-round').options.length) this.fillRoundSelect('match-round','match-liga');
     const teams = LEAGUES[liga]?.teams || TEAMS;
     ['match-home', 'match-away'].forEach(id => {
