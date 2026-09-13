@@ -314,7 +314,7 @@
       <div class="card-title">Registrar partido</div>
       <div class="form-group">
         <label>Liga</label>
-        <select id="match-liga" onchange="app.updateAdminTeams(); app.fillRoundSelect('match-round','match-liga')">
+        <select id="match-liga" onchange="app.updateAdminTeams(); app.fillRoundSelect('match-round','match-liga'); app.loadAdminMatches()">
           <option value="champions">⭐ Champions League</option>
           <option value="europa">🟠 Europa League</option>
           <option value="premier">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
@@ -716,7 +716,6 @@ class QuinielaEngine {
 
   updateAdminTeams() {
     const liga = document.getElementById('match-liga')?.value || 'champions';
-    this.toast('DEBUG liga=' + liga, 'ok');
     if (!document.getElementById('match-round').options.length) this.fillRoundSelect('match-round','match-liga');
     const teams = LEAGUES[liga]?.teams || TEAMS;
     ['match-home', 'match-away'].forEach(id => {
@@ -1216,13 +1215,15 @@ class QuinielaEngine {
     sel.innerHTML    = '<option value="">Cargando...</option>';
     selMan.innerHTML = '<option value="">Cargando...</option>';
     try {
-      const snap = await getDocs(query(collection(db, 'matches'), orderBy('round')));
+      const ligaActual = document.getElementById('match-liga')?.value || 'champions';
+      const snap = await getDocs(query(collection(db, 'matches'), where('liga', '==', ligaActual)));
       sel.innerHTML    = '<option value="">— Selecciona partido —</option>';
       selMan.innerHTML = '<option value="">— Selecciona partido —</option>';
       snap.forEach(d => {
         const m    = d.data();
-        const home = TEAMS[m.homeTeamId]?.name || m.homeTeamId;
-        const away = TEAMS[m.awayTeamId]?.name || m.awayTeamId;
+        const teamsForMatch = LEAGUES[m.liga || 'champions']?.teams || TEAMS;
+        const home = teamsForMatch[m.homeTeamId]?.name || TEAMS[m.homeTeamId]?.name || m.homeTeamId;
+        const away = teamsForMatch[m.awayTeamId]?.name || TEAMS[m.awayTeamId]?.name || m.awayTeamId;
         const label = `${m.round}: ${home} vs ${away}${m.status==='FINISHED' ? ' ✓' : ''}`;
 
         const opt1 = document.createElement('option');
@@ -1334,8 +1335,9 @@ class QuinielaEngine {
     const mDoc = await getDoc(doc(db, 'matches', matchId));
     if (!mDoc.exists()) { this.toast('Partido no encontrado', 'err'); return; }
     const m = mDoc.data();
-    const homeTeam = TEAMS[m.homeTeamId]?.name || m.homeTeamId;
-    const awayTeam = TEAMS[m.awayTeamId]?.name || m.awayTeamId;
+    const teamsForResult = LEAGUES[m.liga || 'champions']?.teams || TEAMS;
+    const homeTeam = teamsForResult[m.homeTeamId]?.name || TEAMS[m.homeTeamId]?.name || m.homeTeamId;
+    const awayTeam = teamsForResult[m.awayTeamId]?.name || TEAMS[m.awayTeamId]?.name || m.awayTeamId;
 
     let ganador;
     if      (golesLocal > golesVisita) ganador = homeTeam;
